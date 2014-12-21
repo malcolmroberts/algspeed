@@ -46,13 +46,16 @@ def main(argv):
         print "Read " + str(len(t1)) + " values."
         t1med, t1low, t1high = medianconf(t1)
         t2med, t2low, t2high = medianconf(t2)
+        print "median, lower bound, upperbound:"
         print t1med, t1low, t1high
         print t2med, t2low, t2high
-        if(t1med > t2med):
-            diff = max(t1high - t1med, t2med - t2low)
-        else: 
-            diff = max(t1med - t1low, t2high - t2med)
-        print "diff: " + str(diff)
+        print "mean of t1, mean of t2, diff:"
+        print np.mean(t1), np.mean(t2), np.abs(np.mean(t1) - np.mean(t2))
+        #if(t1med > t2med):
+        #    diff = max(t1high - t1med, t2med - t2low)
+        #else: 
+        #    diff = max(t1med - t1low, t2high - t2med)
+        #print "diff: " + str(diff)
         if(t1low < t2high or t2low < t1high):
             print "The confidence intervals overlap."
         else:
@@ -62,7 +65,7 @@ def main(argv):
             print "Error: arrays differ in length, so WSR is not valid."
             sys.exit(1)
         T , p = scipy.stats.wilcoxon(t1, t2)
-        print p
+        print "p: " + str(p)
         if(p < 0.05):
             print "The difference in medians is significant."
         else:
