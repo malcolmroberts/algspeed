@@ -66,8 +66,8 @@ pair ldx = (1e-4,0);
 if(tmean >= median) {
   ldx *= -1;
 }
-pair lmean = Scale((tmean, 10) + 6 * S) - ldx;
-pair lmedian = Scale((median, 10) + 6 * S) + ldx;
+pair lmean = Scale((tmean, low)) + 0.75*S - ldx;
+pair lmedian = Scale((median, low)) + 0.75*S + ldx;
 //dot(lmean,  red);
 //dot(lmedian,  blue);
 label("mean", lmean + 0.1 * S, Align, red);
