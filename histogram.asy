@@ -10,6 +10,9 @@ filename = getstring("external data:");
 file fin = input(filename).line();
 real[][] a = fin.dimension(0,0);
 a = transpose(a);
+
+write("read " + (string)(a[0].length) + " values.");
+
 real[] t = sort(a[0]);
 
 int N = 2 * bins(t);
