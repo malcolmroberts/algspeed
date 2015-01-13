@@ -1,7 +1,7 @@
 import graph;
 import stats;
 
-size(400, 200, IgnoreAspect);
+size(20cm, 10cm, IgnoreAspect);
 
 scale(Linear, Log);
 
@@ -62,17 +62,27 @@ xequals(tmean, red);
 
 write("mean: ", tmean);
 
-pair ldx = (1e-4,0);
+pair pmin = min(currentpicture);
+pair pmax = max(currentpicture);
+
+pair ldx = 4e-2 * (truepoint(E, true).x - truepoint(W, true).x , 0);
 if(tmean >= median) {
   ldx *= -1;
 }
-pair lmean = Scale((tmean, low)) + 0.75*S - ldx;
-pair lmedian = Scale((median, low)) + 0.75*S + ldx;
-//dot(lmean,  red);
-//dot(lmedian,  blue);
-label("mean", lmean + 0.1 * S, Align, red);
-label("median", lmedian + 0.1 * S, Align, blue);
-draw(lmedian--Scale((median, low)), blue, EndArrow);
-draw(lmean--Scale((tmean, low)), red, EndArrow);
 
-label(texify(filename), truepoint(S)+0.5*S);
+pair q = truepoint(S, true);
+label(texify(filename), q, 4*S);
+
+bool dolabels = true;
+if(dolabels) {
+  pair lmean = Scale((tmean, low) - ldx) + 0.75*S;
+  pair lmedian = Scale((median, low) + ldx) + 0.75*S;
+  
+  //dot(lmean,  red);
+  //dot(lmedian,  blue);
+  label("mean", lmean + 0.1 * S, Align, red);
+  label("median", lmedian + 0.1 * S, Align, blue);
+  draw(lmedian--Scale((median, low)), blue, EndArrow);
+  draw(lmean--Scale((tmean, low)), red, EndArrow);
+}
+
