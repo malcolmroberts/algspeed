@@ -4,6 +4,7 @@ import stats;
 size(20cm, 10cm, IgnoreAspect);
 
 scale(Linear, Log);
+bool speed = true;
 
 string filename;
 filename = getstring("external data:");
@@ -13,12 +14,19 @@ a = transpose(a);
 
 write("read " + (string)(a[0].length) + " values.");
 
-real[] t = sort(a[0]);
+real[] t = a[0];
 
-int N = 2 * bins(t);
+if(speed) {
+  for(int i = 0; i < t.length; ++i)
+    t[i] = 1.0 / t[i];
+}
 
-real[] tfreq = frequency(t, min(t), max(t), N);
-real dx =  (max(t) - min(t)) / N;
+t = sort(t);
+  
+int nbins = 2 * bins(t);
+
+real[] tfreq = frequency(t, min(t), max(t), nbins);
+real dx =  (max(t) - min(t)) / nbins;
 tfreq /= dx*sum(tfreq);
 
 real hlow(real[] tfreq, picture pic = currentpicture)
@@ -33,20 +41,22 @@ real hlow(real[] tfreq, picture pic = currentpicture)
 }
 real low = hlow(tfreq);
 
-histogram(t, min(t), max(t), N,
+histogram(t, min(t), max(t), nbins,
 	  normalize = true, //low = min(t),
 	  lightred + opacity(0.5), black, bars = false);
 
-xaxis("time", BottomTop, LeftTicks);
+string xleg = speed ? "computations per second" : "time (s)";
+xaxis(xleg, BottomTop, LeftTicks);
 yaxis("Relative frequency", LeftRight, RightTicks);
 
 write("min: ", t[0]);
 write("max: ", t[t.length - 1]);
 
 int n = t.length;
+real alpha = 0.05;
 real median = t[floor(0.5 * n)];
-int nlow = floor(0.025 * n);
-int nhigh = ceil(0.975 * n);
+int nlow = floor(0.5 * alpha * n);
+int nhigh = ceil((1.0 - 0.5 * alpha) * n);
 real medlow = t[nlow];
 real medhigh = t[nhigh];
 xequals(median, blue);
@@ -65,27 +75,34 @@ xequals(tmean, red);
 
 write("mean: ", tmean);
 
-pair pmin = min(currentpicture);
-pair pmax = max(currentpicture);
+pair q = truepoint(N, true);
+label(texify(filename), q, 4*N);
 
-pair ldx = 4e-2 * (truepoint(E, true).x - truepoint(W, true).x , 0);
+pair ldx = 6e-2 * (truepoint(E, true).x - truepoint(W, true).x , 0);
 if(tmean >= median) {
   ldx *= -1;
 }
-
-pair q = truepoint(S, true);
-label(texify(filename), q, 4*S);
+ldx = 0.0;
 
 bool dolabels = true;
 if(dolabels) {
   pair lmean = Scale((tmean, low) - ldx) + 0.75*S;
-  pair lmedian = Scale((median, low) + ldx) + 0.75*S;
-  
-  //dot(lmean,  red);
-  //dot(lmedian,  blue);
-  label("mean", lmean + 0.1 * S, Align, red);
-  label("median", lmedian + 0.1 * S, Align, blue);
-  draw(lmedian--Scale((median, low)), blue, EndArrow);
-  draw(lmean--Scale((tmean, low)), red, EndArrow);
-}
+  pair lmedian = Scale((median, low) + ldx) + 1.0*S;
+  pair lalpha = Scale((t[nlow], low) + ldx) + 1.25*S;
+  pair lahpla = Scale((t[nhigh], low) + ldx) + 1.5*S;
 
+  label("mean: "+ format("%5.2f", tmean), lmean, Align, red);
+  draw(lmean--Scale((tmean, low)), red+dashed, EndArrow);
+
+  label("median: "+ format("%5.2f", median), lmedian, Align, blue);
+  draw(lmedian--Scale((median, low)), blue+dashed, EndArrow);
+  
+  label(format("%5.3f", 0.5 * alpha) + "\%: " + format("%5.2f", t[nlow]),
+	lalpha + 0.1 * S, Align, blue);
+  draw(lalpha--Scale((t[nlow], low)), blue+dashed, EndArrow);
+  
+  label(format("%5.3f", (1.0 - 0.5 * alpha)) + "\%: " + format("%5.2f", t[nhigh]),
+	lahpla + 0.1 * S, Align, blue);
+  draw(lahpla--Scale((t[nhigh], low)), blue+dashed, EndArrow);
+  
+}
