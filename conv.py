@@ -36,11 +36,17 @@ def medianconf(t, alpha):
     thigh = t[nhigh]
     return tmedian, tlow, thigh
 
-usage = "./conv.py\n"\
-        "\t-f <filename, can be called more than once>\n" \
-        "\t-N <int> : sets N \n " \
-        "\t-a <float>: sets alpha\n" \
-        "\t-i"
+usage = "Take a file and plot measure the convergence of various statistical"\
+        "tests for to measure algorithm speed.\n"\
+        "Usage:\n"\
+        "\t./conv.py\n"\
+        "\t\t-f <filename>: set the filename (required)\n" \
+        "\t\t-N <int> : sets N, the number of subsequences considered.\n"\
+        "\t\t\tIf N is 1, then compute the standard error for the values\n" \
+        "\t\t\tas a single file. \n " \
+        "\t\t-a <float>: sets alpha, where the confidence interval is 1-alpha\n" \
+        "\t\t-i: consider the inverse of the time instead of the time"
+
 def main(argv):
     filenames = []
     N = 1
@@ -65,21 +71,15 @@ def main(argv):
         if opt in ("-h"):
             print usage
             sys.exit(0)
-    N = 1
-    alpha = 0.05
-    inv = False
 
-    # Load the command-line arguments
-    try:
-        opts, args = getopt.getopt(argv,"f:N:a:i")
-    except getopt.GetoptError:
+    if(len(filenames) != 1):
+        print "Please specify exactly one file!"
         print usage
-        sys.exit(2)
-            
-
-    if(len(filenames) == 1):
+        sys.exit(1)
+    else:
+        print "reading " + filenames[0]
         t = readtimes(filenames[0])
-        print len(t)
+        print "read " +str(len(t)) +" values."
         
         if(inv):
             i = 0
@@ -89,7 +89,7 @@ def main(argv):
         
         n = int(np.floor(len(t) / N))
         
-        print n
+        print "\tsubsequence length: " + str(n)
         
         nmed = []
         npalpha = []
@@ -99,9 +99,10 @@ def main(argv):
         nstarts = []
         nends = []
 
-        i = int(np.ceil(1.0 / alpha)) 
+        i = int(np.ceil(1.0 / alpha)) # This is the min length needed
+                                      # for the confidence interval
         while(i < n):
-            print i
+            print "considering subsequence length" + str(i)
 
             meds = [i]
             palphas = [i]
@@ -126,7 +127,7 @@ def main(argv):
                 nstart = int(np.floor(0.5 * alpha * i))
                 nend = int(np.floor((1.0 - 0.5 * alpha) * i))
 
-                palphas.append(np.median(ti[nstart:nend]))
+                palphas.append(np.mean(ti[nstart:nend]))
                 if(N == 1):
                     palphas.append(median - ti[nstart])
                     palphas.append(t[nend] - median)
@@ -148,7 +149,6 @@ def main(argv):
                 if(N == 1):
                     ends.append(val - ti[nend])
                     ends.append(ti[-1] - val)
-
                 
                 j += 1
                 
@@ -162,13 +162,15 @@ def main(argv):
 
             i *= 2
 
-        write_av(nmed, "medians.csv")
-        write_av(npalpha, "palphas.csv")
-        write_av(nmean, "means.csv")
-        write_av(nmin, "mins.csv")
-        write_av(nmax, "maxs.csv")
-        write_av(nstarts, "starts.csv")
-        write_av(nends, "ends.csv")
+        write_av(nmed, "medians.csv") #median values
+        write_av(npalpha, "palphas.csv") # mean of the data between
+                                         # the (0.5alpha)-percentile
+                                         # and (1-0.5alpha)-percentile
+        write_av(nmean, "means.csv") #mean values
+        write_av(nmin, "mins.csv") #max values
+        write_av(nmax, "maxs.csv") #min values
+        write_av(nstarts, "starts.csv") # (0.5 * alpha)-percentile value
+        write_av(nends, "ends.csv") # (1 - 0.5 * alpha)-percentile value
 
 # The main program is called from here
 if __name__ == "__main__":
