@@ -21,8 +21,8 @@ int lastpos;
 
 bool doxticks=true;
 bool doyticks=true;
-string xlabel="$x$";
-string ylabel="$y$";
+string xlabel="sample size";
+string ylabel="value";
 
 usersetting();
 bool myleg=((legendlist == "") ? false: true);
