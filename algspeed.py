@@ -10,7 +10,10 @@ def readtimes(filename):
     t = []
     csvReader = csv.reader(open(filename, 'rb'), delimiter = '\t')
     for row in csvReader:
-        t.append(float(row[0]))
+        if row[0][0] != '#':
+            #print row[0]
+            #print float(row[0])
+            t.append(float(row[0]))
     return t
 
 def medianconf(t):
