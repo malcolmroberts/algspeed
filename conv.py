@@ -36,6 +36,11 @@ def medianconf(t, alpha):
     thigh = t[nhigh]
     return tmedian, tlow, thigh
 
+usage = "./conv.py\n"\
+        "\t-f <filename, can be called more than once>\n" \
+        "\t-N <int> : sets N \n " \
+        "\t-a <float>: sets alpha\n" \
+        "\t-i"
 def main(argv):
     filenames = []
     N = 1
@@ -57,6 +62,20 @@ def main(argv):
             alpha = float(arg)
         if opt in ("-i"):
             inv = True
+        if opt in ("-h"):
+            print usage
+            sys.exit(0)
+    N = 1
+    alpha = 0.05
+    inv = False
+
+    # Load the command-line arguments
+    try:
+        opts, args = getopt.getopt(argv,"f:N:a:i")
+    except getopt.GetoptError:
+        print usage
+        sys.exit(2)
+            
 
     if(len(filenames) == 1):
         t = readtimes(filenames[0])
