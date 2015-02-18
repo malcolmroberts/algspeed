@@ -102,7 +102,7 @@ def main(argv):
         i = int(np.ceil(1.0 / alpha)) # This is the min length needed
                                       # for the confidence interval
         while(i < n):
-            print "considering subsequence length" + str(i)
+            print "considering subsequence length: " + str(i)
 
             meds = [i]
             palphas = [i]
