@@ -29,16 +29,16 @@ filetodf <- function(filename)
 
 # Creat the data frame and fill it
     print( "times" )
-    times<-NULL;
+    times <- NULL;
     cnames <- c(1:length(dat))
     for( i in 1:length(dat) )
         {
             print(i)
             m <- dat[i][[1]][[1]]
-            print(m)
+            #print(m)
             cnames[i] <- toString(m)
             row <- dat[i][[1]][c(3:lengths(dat[i]))]
-            print(row)
+            #print(row)
             cbind(times, row) -> times
         }
     colnames( times ) <- cnames
@@ -50,14 +50,18 @@ times2 <- filetodf(filename2)
 
 # Show information about the data frames.
 typeof(times1)
-times1
+#times1
 summary(times1)
 
 # Show information about the data frames.
 typeof(times2)
-times2
+#times2
 summary(times2)
 
-# Compare the m=64 times with the m=128 times
+paste("Testing", filename1, "and", filename2, "at m =", mval, sep = " ") 
+
+print("Wilcoxon rank test:")
 wilcox.test(times1[,mval], times2[,mval])
 
+print("Mood's median test:")
+#mood.medtest(times1[,mval], times2[,mval])
