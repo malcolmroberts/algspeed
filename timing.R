@@ -4,6 +4,8 @@
 # Set the filename
 filename <- 'cconv3_implicit'
 
+filetodf <- function(filename)
+{
 # Read data from file, dropping first row
 dat <- readLines(filename)[-1]
 
@@ -30,11 +32,16 @@ for( i in 1:length(dat) )
 #times <- data.frame(dat[m][[1]][c(3:lengths(dat[i]))])
 }
 colnames( times ) <- cnames
+return( times )
+}
+
+times <- filetodf(filename)
 
 # Show information about the data frame.
 typeof(times)
 times
 summary(times)
+
 
 # Compare the m=64 times with the m=128 times
 wilcox.test(times[,"64"], times[,"128"])
