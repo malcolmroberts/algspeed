@@ -1,8 +1,20 @@
 # run with:
-# Rscript timing.R
+# Rscript timing.R filename1 filename2 m-value
 
-# Set the filename
-filename <- 'cconv3_implicit'
+#!/usr/bin/env Rscript
+args = commandArgs(trailingOnly=TRUE)
+print(args)
+
+# usage: 
+
+if (length(args) < 3) {
+  stop("FIXME: doc. need 3 args .\n", call.=FALSE)
+}
+
+filename1 <- args[1]
+filename2 <- args[2]
+mval <- args[3]
+
 
 filetodf <- function(filename)
 {
@@ -33,12 +45,19 @@ filetodf <- function(filename)
     return( times )
 }
 
-times <- filetodf(filename)
+times1 <- filetodf(filename1)
+times2 <- filetodf(filename2)
 
-# Show information about the data frame.
-typeof(times)
-times
-summary(times)
+# Show information about the data frames.
+typeof(times1)
+times1
+summary(times1)
+
+# Show information about the data frames.
+typeof(times2)
+times2
+summary(times2)
 
 # Compare the m=64 times with the m=128 times
-wilcox.test(times[,"64"], times[,"128"])
+wilcox.test(times1[,mval], times2[,mval])
+
