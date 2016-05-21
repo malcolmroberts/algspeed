@@ -31,16 +31,13 @@ filetodf <- function(filename)
     print( "times" )
     times <- NULL;
     cnames <- c(1:length(dat))
-    for( i in 1:length(dat) )
-        {
-            print(i)
-            m <- dat[i][[1]][[1]]
-            #print(m)
-            cnames[i] <- toString(m)
-            row <- dat[i][[1]][c(3:lengths(dat[i]))]
-            #print(row)
-            cbind(times, row) -> times
-        }
+    for( i in 1:length(dat) )  {
+        print(i)
+        m <- dat[i][[1]][[1]]
+        cnames[i] <- toString(m)
+        row <- dat[i][[1]][c(3:lengths(dat[i]))]
+        cbind(times, row) -> times
+    }
     colnames( times ) <- cnames
     return( times )
 }
