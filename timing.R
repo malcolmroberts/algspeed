@@ -1,5 +1,7 @@
 # run with:
 # Rscript timing.R filename1 filename2 m-value
+# example:
+# Rscript timing.R cconv3_explicit cconv3_implicit 128
 
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
@@ -14,6 +16,10 @@ if (length(args) < 3) {
 filename1 <- args[1]
 filename2 <- args[2]
 mval <- args[3]
+
+print(filename1)
+print(filename2)
+
 
 
 filetodf <- function(filename)
@@ -62,3 +68,14 @@ wilcox.test(times1[,mval], times2[,mval])
 
 print("Mood's median test:")
 #mood.medtest(times1[,mval], times2[,mval])
+
+#kruskal.test(times1[,mval], times2[,mval])
+median.test <- function(x, y){
+#http://stats.stackexchange.com/questions/81864/hypothesis-test-for-difference-in-medians-among-more-than-two-samples
+    z <- c(x, y)
+    g <- rep(1:2, c(length(x), length(y)))
+    m <- median(z)
+    fisher.test(z < m, g)$p.value
+}
+
+median.test(times1[,mval], times2[,mval])
